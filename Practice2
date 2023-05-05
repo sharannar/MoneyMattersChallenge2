@@ -1,0 +1,73 @@
+/* 
+Description:
+1. Get a list of customers who made purchases between 2011 and 2012.
+2. Get a list of customers, sales reps, and total transaction amounts for each customer
+between 2011 and 2012.
+3. How many transactions are above the average transaction amount during the same
+time period?
+4. What is the average transaction amount for each year that WSDA Music has been
+in business?
+*/
+SELECT
+c.FirstName AS [Customer FN],
+c.LastName As [Customer LN],
+e.LastName As [Employee LN],
+e.FirstName As [EmployeeFN],
+i.total
+From 
+Invoice i
+Inner JOIN
+Customer c
+On i.CustomerId = c.CustomerId
+Inner Join 
+Employee e
+On e.EmployeeId = c.SupportRepId
+Where 
+InvoiceDate >='2011-01-01' And InvoiceDate <= '2012-12-31'
+Order by 
+i.total DESC
+
+
+
+
+
+
+
+
+
+
+
+--3. How many transactopms are above the average transaction amount during the same time?
+--Find Average transaction amount between 2011 and 2012
+SELECT
+round(avg(total),2) As [Avg Transaction Amount]
+From
+Invoice
+WHERE
+invoiceDate >= '2011-01-01' AND InvoiceDate <= '2012-12-31'
+--Get the number of transaction above the average transaction amount
+SELECT
+count(total) AS [Num of Transactions Above Avg]
+FROM
+Invoice
+WHERE
+total>
+			(
+				Select round(avg(total),2)AS [Avg Transaction Amount]
+FROM
+Invoice
+Where 
+invoiceDate>= '2011-01-01' And InvoiceDate <= '2012-12-31'
+)
+AND
+InvoiceDate>='2011-01-01' And InvoiceDate <='2012-12-31'
+
+
+--4. What was the average transaction amount for each year that WSDA Music has been in business?
+SELECT
+round(avg(total),2) AS [Avg Transaction Amount],
+strftime('%Y',InvoiceDate) As [year]
+FROM
+Invoice
+Group By
+strftime ('%Y',InvoiceDate)
